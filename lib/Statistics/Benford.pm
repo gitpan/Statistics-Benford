@@ -3,7 +3,7 @@ package Statistics::Benford;
 use strict;
 use List::Util qw(sum);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new {
     my ($class, $base, $n, $len) = @_;

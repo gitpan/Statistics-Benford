@@ -1,4 +1,8 @@
 Revision history for Statistics-Benford
 
+0.02  Mon Jul 30 19:04:37 GMT 2007
+    - Added a kwalitee test.
+    - Removed resource forks.
+
 0.01  Tue Jul 24 20:00:18 GMT 2007
     - Initial distribution.
