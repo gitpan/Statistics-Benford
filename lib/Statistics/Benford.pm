@@ -3,7 +3,7 @@ package Statistics::Benford;
 use strict;
 use List::Util qw(sum);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub new {
     my ($class, $base, $n, $len) = @_;
@@ -32,18 +32,11 @@ sub new {
         $dist{$digit} = ( 1 / log($base) ) * $sum;
     }
 
-    my $self = {
-        base => $base,
-        n    => $n,
-        len  => $len,
-        dist => \%dist,
-    };
-
-    return bless $self, $class;
+    return bless [ $base, $n, $len, \%dist ], $class;
 }
 
 sub distribution {
-    return %{ $_[0]->{dist} };
+    return %{ $_[0]->[3] };
 }
 *dist = \&distribution;
 
@@ -52,7 +45,7 @@ sub difference {
     my ($diff, %diff) = 0;
 
     my $count = sum values %freq;
-    while ( my ($num, $percent) = each %{ $self->{dist} } ) {
+    while ( my ($num, $percent) = each %{ $self->[3] } ) {
         my $delta = ( $freq{$num} ? $freq{$num}/$count : 0 ) - $percent;
         $diff += abs( $diff{$num} = $delta );
     }
@@ -66,14 +59,14 @@ sub signif {
     my ($diff, %diff) = 0;
 
     my $count = sum values %freq;
-    while ( my ($num, $percent) = each %{ $self->{dist} } ) {
+    while ( my ($num, $percent) = each %{ $self->[3] } ) {
         my $delta = ( $freq{$num} ? $freq{$num}/$count : 0 ) - $percent;
         my $fix = abs $delta > 1/(2*$count) ? 1/(2*$count) : 0;
         my $z = (abs($delta) - $fix) / sqrt($percent * (1 - $percent) / $count);
         $diff += $diff{$num} = $z ;
     }
 
-    return wantarray ? %diff : $diff / keys %{ $self->{dist} };
+    return wantarray ? %diff : $diff / keys %{ $self->[3] };
 }
 *z = \&signif;
 
