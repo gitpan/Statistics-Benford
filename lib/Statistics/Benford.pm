@@ -3,7 +3,7 @@ package Statistics::Benford;
 use strict;
 use List::Util qw(sum);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub new {
     my ($class, $base, $n, $len) = @_;
@@ -15,21 +15,21 @@ sub new {
     my ($k_start, $k_end, $d_start);
     if (0 == $n) {
         ($k_start, $k_end) = (0, 0);
-        $d_start =  $base**($len-1);
+        $d_start = $base ** ( $len - 1 );
     }
     else {
-        ($k_start, $k_end) = ( $base**($n-1), $base**$n - 1 );
-        $d_start = (1 == $len) ? 0 : $base**($len-1);
+        ($k_start, $k_end) = ( $base ** ( $n - 1 ), $base ** $n - 1 );
+        $d_start = (1 == $len) ? 0 : $base ** ( $len - 1 );
     }
-    my $d_end = $base**$len - 1;
+    my $d_end = $base ** $len - 1;
 
     my %dist;
     for my $digit ( $d_start .. $d_end ) {
         my $sum = 0;
         for my $k ($k_start .. $k_end) {
-            $sum += log( 1 + 1 / ($k * $base + $digit) );
+            $sum += log( 1 + 1 / ( $k * $base + $digit ) );
         }
-        $dist{$digit} = ( 1 / log($base) ) * $sum;
+        $dist{ $digit } = ( 1 / log( $base ) ) * $sum;
     }
 
     return bless [ $base, $n, $len, \%dist ], $class;
@@ -38,6 +38,7 @@ sub new {
 sub distribution {
     return %{ $_[0]->[3] };
 }
+
 *dist = \&distribution;
 
 sub difference {
@@ -46,12 +47,13 @@ sub difference {
 
     my $count = sum values %freq;
     while ( my ($num, $percent) = each %{ $self->[3] } ) {
-        my $delta = ( $freq{$num} ? $freq{$num}/$count : 0 ) - $percent;
-        $diff += abs( $diff{$num} = $delta );
+        my $delta = ( $freq{ $num } ? $freq{ $num } / $count : 0 ) - $percent;
+        $diff += abs( $diff{ $num } = $delta );
     }
 
     return wantarray ? %diff : $diff;
 }
+
 *diff = \&difference;
 
 sub signif {
@@ -60,14 +62,16 @@ sub signif {
 
     my $count = sum values %freq;
     while ( my ($num, $percent) = each %{ $self->[3] } ) {
-        my $delta = ( $freq{$num} ? $freq{$num}/$count : 0 ) - $percent;
-        my $fix = abs $delta > 1/(2*$count) ? 1/(2*$count) : 0;
-        my $z = (abs($delta) - $fix) / sqrt($percent * (1 - $percent) / $count);
-        $diff += $diff{$num} = $z ;
+        my $delta = ( $freq{ $num } ? $freq{ $num } / $count : 0 ) - $percent;
+        my $fix = abs $delta > 1 / ( 2 * $count ) ? 1 / ( 2 * $count ) : 0;
+        my $z = (abs( $delta ) - $fix) /
+                sqrt( $percent * (1 - $percent) / $count);
+        $diff += $diff{ $num } = $z ;
     }
 
     return wantarray ? %diff : $diff / keys %{ $self->[3] };
 }
+
 *z = \&signif;
 
 1;
