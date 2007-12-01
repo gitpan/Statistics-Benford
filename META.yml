@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Statistics-Benford
-version:             0.05
+version:             0.06
 abstract:            calculate the deviation from Benford's Law
 license:             perl
 generated_by:        ExtUtils::MakeMaker version 6.36
