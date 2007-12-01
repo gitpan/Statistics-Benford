@@ -1,9 +1,10 @@
 package Statistics::Benford;
 
 use strict;
-use List::Util qw(sum);
+use warnings;
+use List::Util qw( sum );
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 sub new {
     my ($class, $base, $n, $len) = @_;
@@ -13,20 +14,20 @@ sub new {
     $len ||= 1;
 
     my ($k_start, $k_end, $d_start);
-    if (0 == $n) {
-        ($k_start, $k_end) = (0, 0);
+    if ( 0 == $n ) {
+        ( $k_start, $k_end ) = ( 0, 0 );
         $d_start = $base ** ( $len - 1 );
     }
     else {
-        ($k_start, $k_end) = ( $base ** ( $n - 1 ), $base ** $n - 1 );
-        $d_start = (1 == $len) ? 0 : $base ** ( $len - 1 );
+        ( $k_start, $k_end ) = ( $base ** ( $n - 1 ), $base ** $n - 1 );
+        $d_start = ( 1 == $len ) ? 0 : $base ** ( $len - 1 );
     }
     my $d_end = $base ** $len - 1;
 
     my %dist;
     for my $digit ( $d_start .. $d_end ) {
         my $sum = 0;
-        for my $k ($k_start .. $k_end) {
+        for my $k ( $k_start .. $k_end ) {
             $sum += log( 1 + 1 / ( $k * $base + $digit ) );
         }
         $dist{ $digit } = ( 1 / log( $base ) ) * $sum;
@@ -92,23 +93,23 @@ Statistics::Benford - calculate the deviation from Benford's Law
 
 =head1 DESCRIPTION
 
-The C<Statistics::Benford> calculates the deviation from Benford's law, also 
-known as the first-digit law. The law states that for many sources of 
-real-life data, the leading digit follows a logarithmic, not uniform, 
-distribution. This fact can be used to audit data for signs of fraud by 
-comparing the expected frequency of the digits to the actual frequency in the 
+The C<Statistics::Benford> module calculates the deviation from Benford's law,
+also known as the first-digit law. The law states that for many sources of
+real-life data, the leading digit follows a logarithmic, not uniform,
+distribution. This fact can be used to audit data for signs of fraud by
+comparing the expected frequency of the digits to the actual frequency in the
 data.
 
 =head1 METHODS
 
-=over 4
+=over
 
 =item $stats = Statistics::Benford->B<new>
 
 =item $stats = Statistics::Benford->B<new>( $base, $pos, $len )
 
-Creates a new Statistics::Benford object. The constructor will accept the 
-number base, the position of the significant digit in the number to examine, 
+Creates a new Statistics::Benford object. The constructor will accept the
+number base, the position of the significant digit in the number to examine,
 and the number of digits starting from that position.
 
 The default values are: (10, 0, 1).
@@ -127,8 +128,8 @@ Returns a hash of the expected percentages.
 
 =item %diff = $stats->B<difference>( %freq )
 
-Given a hash representing the frequency count of the digits in the data to 
-examine, returns the percentage differences of each digit in list context, and 
+Given a hash representing the frequency count of the digits in the data to
+examine, returns the percentage differences of each digit in list context, and
 the sum of the differences in scalar context.
 
 =item $diff = $stats->B<signif>( %freq )
@@ -139,14 +140,14 @@ the sum of the differences in scalar context.
 
 =item %diff = $stats->B<z>( %freq )
 
-Given a hash representing the frequency count of the digits in the data to 
-examine, returns the z-statistic of each digit in list context, and the 
+Given a hash representing the frequency count of the digits in the data to
+examine, returns the z-statistic of each digit in list context, and the
 average of the z-statistics for all the digits in scalar context.
 
-The z-statistic shows the statistical significance of the difference between 
-the two proportions. Significance takes into account the size of the 
-difference, the expected proportion, and the sample size.  Scores above 1.96 
-are significant at the 0.05 level, and above 2.57 are significant at the 0.01 
+The z-statistic shows the statistical significance of the difference between
+the two proportions. Significance takes into account the size of the
+difference, the expected proportion, and the sample size.  Scores above 1.96
+are significant at the 0.05 level, and above 2.57 are significant at the 0.01
 level.
 
 =back
@@ -194,9 +195,9 @@ negative and positive values separately.
 
 =head1 REQUESTS AND BUGS
 
-Please report any bugs or feature requests to 
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Statistics-Benford>. I will 
-be notified, and then you'll automatically be notified of progress on your bug 
+Please report any bugs or feature requests to
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Statistics-Benford>. I will
+be notified, and then you'll automatically be notified of progress on your bug
 as I make changes.
 
 =head1 SUPPORT
@@ -207,7 +208,7 @@ You can find documentation for this module with the perldoc command.
 
 You can also look for information at:
 
-=over 4
+=over
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
@@ -231,7 +232,7 @@ L<http://search.cpan.org/dist/Statistics-Benford>
 
 Copyright (C) 2007 gray <gray at cpan.org>, all rights reserved.
 
-This library is free software; you can redistribute it and/or modify it under 
+This library is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
 
 =head1 AUTHOR

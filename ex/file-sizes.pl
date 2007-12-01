@@ -27,5 +27,5 @@ for my $digit ( sort keys %dist ) {
 }
 
 print "\n";
-printf "diff: %.2f\n", scalar $stats->diff( %freq );           
+printf "diff: %.2f\n", scalar $stats->diff( %freq );
 printf "z:    %.2f\n", scalar $stats->z( %freq );

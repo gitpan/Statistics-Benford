@@ -5,45 +5,47 @@ use Statistics::Benford;
 
 {
     my $stats = Statistics::Benford->new;
-    my %freq = map { $_ => 99 } (1..9);
+    my %freq = map { $_ => 99 } ( 1 .. 9 );
 
-    my $diff = sprintf "%.3f", 0 + $stats->diff(%freq);
+    my $diff = sprintf "%.3f", 0 + $stats->diff( %freq );
     cmp_ok( $diff, '==', 0.537, 'scalar diff: 10, 0, 1' );
 
-    my @e = qw(-0.190 -0.065 -0.014 0.014 0.032 0.044 0.053 0.060 0.065);
-    my %e = map { $_ => $e[$_-1] } (1..9);
+    my @e = qw( -0.190 -0.065 -0.014 0.014 0.032 0.044 0.053 0.060 0.065 );
+    my %e = map { $_ => $e[ $_ -1 ] } ( 1 .. 9 );
 
-    my %d = $stats->diff(%freq); 
-    while (my ($k, $v) = each %d) {
-        $d{$k} = sprintf "%.3f", $v;
+    my %d = $stats->diff( %freq );
+    while ( my ($k, $v) = each %d ) {
+        $d{ $k } = sprintf "%.3f", $v;
     }
 
-    is_deeply( \%d, \%e ,'list diff: 10, 0, 1');
+    is_deeply( \%d, \%e ,'list diff: 10, 0, 1' );
 }
 
 {
-    my $stats = Statistics::Benford->new(10, 1, 1);
-    my %freq = map { $_ => 99 } (0..9);
+    my $stats = Statistics::Benford->new( 10, 1, 1 );
+    my %freq = map { $_ => 99 } (0 .. 9 );
 
-    my $diff = sprintf "%.3f", 0 + $stats->diff(%freq);
+    my $diff = sprintf "%.3f", 0 + $stats->diff( %freq );
     cmp_ok( $diff, '==', 0.094, 'scalar diff: 10, 1, 1' );
 
-    my @e = qw(-0.020 -0.014 -0.009 -0.004 -0.000 0.003 0.007 0.010 0.012 0.015);
-    my %e = map { $_ => $e[$_] } (0..9); 
+    my @e = qw(
+        -0.020 -0.014 -0.009 -0.004 -0.000 0.003 0.007 0.010 0.012 0.015
+    );
+    my %e = map { $_ => $e[ $_ ] } ( 0 .. 9 );
 
-    my %d = $stats->diff(%freq); 
-    while (my ($k, $v) = each %d) {
-        $d{$k} = sprintf "%.3f", $v;
+    my %d = $stats->diff( %freq );
+    while (my ( $k, $v) = each %d ) {
+        $d{ $k } = sprintf "%.3f", $v;
     }
 
-    is_deeply( \%d, \%e ,'list diff: 10, 1, 1');
+    is_deeply( \%d, \%e ,'list diff: 10, 1, 1' );
 }
 
 {
-    my $stats = Statistics::Benford->new(10, 0, 2);
-    my %freq = map { $_ => 99 } (10..99);
+    my $stats = Statistics::Benford->new( 10, 0, 2 );
+    my %freq = map { $_ => 99 } ( 10 .. 99 );
 
-    my $diff = sprintf "%.3f", 0 + $stats->diff(%freq);
+    my $diff = sprintf "%.3f", 0 + $stats->diff( %freq );
     cmp_ok( $diff, '==', 0.538, 'scalar diff: 10, 0, 2' );
 
     my @e = qw(
@@ -57,12 +59,12 @@ use Statistics::Benford;
         0.006 0.006 0.006 0.006 0.006 0.006 0.006 0.006 0.006 0.006 0.007
         0.007 0.007 0.007 0.007 0.007
     );
-    my %e = map { $_ => $e[$_-10] } (10..99);
+    my %e = map { $_ => $e[ $_ - 10 ] } ( 10 .. 99 );
 
-    my %d = $stats->diff(%freq); 
-    while (my ($k, $v) = each %d) {
-        $d{$k} = sprintf "%.3f", $v;
+    my %d = $stats->diff( %freq );
+    while ( my ($k, $v) = each %d ) {
+        $d{ $k } = sprintf "%.3f", $v;
     }
 
-    is_deeply( \%d, \%e ,'list diff: 10, 0, 2');
+    is_deeply( \%d, \%e ,'list diff: 10, 0, 2' );
 }

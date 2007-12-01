@@ -1,5 +1,8 @@
 Revision history for Statistics-Benford
 
+0.05 Sat Dec 1 01:58:35 UTC 2007
+    - Used warnings for better kwalitee.
+
 0.04 Sat Sep 15 19:26:36 GMT 2007
     - Added example script.
     - Used warnings in tests.
