@@ -2,9 +2,9 @@ package Statistics::Benford;
 
 use strict;
 use warnings;
-use List::Util qw( sum );
+use List::Util qw(sum);
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 sub new {
     my ($class, $base, $n, $len) = @_;
@@ -14,26 +14,26 @@ sub new {
     $len ||= 1;
 
     my ($k_start, $k_end, $d_start);
-    if ( 0 == $n ) {
-        ( $k_start, $k_end ) = ( 0, 0 );
-        $d_start = $base ** ( $len - 1 );
+    if (0 == $n) {
+        ($k_start, $k_end) = (0, 0);
+        $d_start = $base ** ($len - 1);
     }
     else {
-        ( $k_start, $k_end ) = ( $base ** ( $n - 1 ), $base ** $n - 1 );
-        $d_start = ( 1 == $len ) ? 0 : $base ** ( $len - 1 );
+        ($k_start, $k_end) = ($base ** ($n - 1), $base ** $n - 1);
+        $d_start = (1 == $len) ? 0 : $base ** ($len - 1);
     }
     my $d_end = $base ** $len - 1;
 
     my %dist;
-    for my $digit ( $d_start .. $d_end ) {
+    for my $digit ($d_start .. $d_end) {
         my $sum = 0;
-        for my $k ( $k_start .. $k_end ) {
-            $sum += log( 1 + 1 / ( $k * $base + $digit ) );
+        for my $k ($k_start .. $k_end) {
+            $sum += log(1 + 1 / ($k * $base + $digit));
         }
-        $dist{ $digit } = ( 1 / log( $base ) ) * $sum;
+        $dist{$digit} = (1 / log($base)) * $sum;
     }
 
-    return bless [ $base, $n, $len, \%dist ], $class;
+    return bless [$base, $n, $len, \%dist], $class;
 }
 
 sub distribution {
@@ -47,9 +47,11 @@ sub difference {
     my ($diff, %diff) = 0;
 
     my $count = sum values %freq;
-    while ( my ($num, $percent) = each %{ $self->[3] } ) {
-        my $delta = ( $freq{ $num } ? $freq{ $num } / $count : 0 ) - $percent;
-        $diff += abs( $diff{ $num } = $delta );
+    return 0 unless $count;
+
+    while (my ($num, $percent) = each %{ $self->[3] }) {
+        my $delta = ($freq{$num} ? $freq{$num} / $count : 0) - $percent;
+        $diff += abs($diff{$num} = $delta);
     }
 
     return wantarray ? %diff : $diff;
@@ -62,11 +64,13 @@ sub signif {
     my ($diff, %diff) = 0;
 
     my $count = sum values %freq;
-    while ( my ($num, $percent) = each %{ $self->[3] } ) {
-        my $delta = ( $freq{ $num } ? $freq{ $num } / $count : 0 ) - $percent;
-        my $fix = abs $delta > 1 / ( 2 * $count ) ? 1 / ( 2 * $count ) : 0;
-        my $z = (abs( $delta ) - $fix) /
-                sqrt( $percent * (1 - $percent) / $count);
+    return 0 unless $count;
+
+    while (my ($num, $percent) = each %{ $self->[3] }) {
+        my $delta = ($freq{$num} ? $freq{$num} / $count : 0) - $percent;
+        my $fix = abs $delta > (1 / (2 * $count)) ? (1 / (2 * $count)) : 0;
+        my $z = (abs($delta) - $fix) /
+                sqrt($percent * (1 - $percent) / $count);
         $diff += $diff{ $num } = $z ;
     }
 
@@ -106,7 +110,7 @@ data.
 
 =item $stats = Statistics::Benford->B<new>
 
-=item $stats = Statistics::Benford->B<new>( $base, $pos, $len )
+=item $stats = Statistics::Benford->B<new>($base, $pos, $len)
 
 Creates a new Statistics::Benford object. The constructor will accept the
 number base, the position of the significant digit in the number to examine,
@@ -114,31 +118,31 @@ and the number of digits starting from that position.
 
 The default values are: (10, 0, 1).
 
-=item %dist = $stats->B<dist>( $bool )
+=item %dist = $stats->B<dist>($bool)
 
-=item %dist = $stats->B<distribution>( $bool )
+=item %dist = $stats->B<distribution>($bool)
 
 Returns a hash of the expected percentages.
 
-=item $diff = $stats->B<diff>( %freq )
+=item $diff = $stats->B<diff>(%freq)
 
-=item $diff = $stats->B<difference>( %freq )
+=item $diff = $stats->B<difference>(%freq)
 
-=item %diff = $stats->B<diff>( %freq );
+=item %diff = $stats->B<diff>(%freq);
 
-=item %diff = $stats->B<difference>( %freq )
+=item %diff = $stats->B<difference>(%freq)
 
 Given a hash representing the frequency count of the digits in the data to
 examine, returns the percentage differences of each digit in list context, and
 the sum of the differences in scalar context.
 
-=item $diff = $stats->B<signif>( %freq )
+=item $diff = $stats->B<signif>(%freq)
 
-=item $diff = $stats->B<z>( %freq )
+=item $diff = $stats->B<z>(%freq)
 
-=item %diff = $stats->B<signif>( %freq );
+=item %diff = $stats->B<signif>(%freq);
 
-=item %diff = $stats->B<z>( %freq )
+=item %diff = $stats->B<z>(%freq)
 
 Given a hash representing the frequency count of the digits in the data to
 examine, returns the z-statistic of each digit in list context, and the
