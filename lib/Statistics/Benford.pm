@@ -4,7 +4,13 @@ use strict;
 use warnings;
 use List::Util qw(sum);
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
+$VERSION = eval $VERSION;
+
+use constant _BASE => 0;
+use constant _N    => 1;
+use constant _LEN  => 2;
+use constant _DIST => 3;
 
 sub new {
     my ($class, $base, $n, $len) = @_;
@@ -37,7 +43,7 @@ sub new {
 }
 
 sub distribution {
-    return %{ $_[0]->[3] };
+    return %{ $_[0]->[_DIST] };
 }
 
 *dist = \&distribution;
@@ -49,7 +55,7 @@ sub difference {
     my $count = sum values %freq;
     return 0 unless $count;
 
-    while (my ($num, $percent) = each %{ $self->[3] }) {
+    while (my ($num, $percent) = each %{ $self->[_DIST] }) {
         my $delta = ($freq{$num} ? $freq{$num} / $count : 0) - $percent;
         $diff += abs($diff{$num} = $delta);
     }
@@ -66,7 +72,7 @@ sub signif {
     my $count = sum values %freq;
     return 0 unless $count;
 
-    while (my ($num, $percent) = each %{ $self->[3] }) {
+    while (my ($num, $percent) = each %{ $self->[_DIST] }) {
         my $delta = ($freq{$num} ? $freq{$num} / $count : 0) - $percent;
         my $fix = abs $delta > (1 / (2 * $count)) ? (1 / (2 * $count)) : 0;
         my $z = (abs($delta) - $fix) /
@@ -74,7 +80,7 @@ sub signif {
         $diff += $diff{ $num } = $z ;
     }
 
-    return wantarray ? %diff : $diff / keys %{ $self->[3] };
+    return wantarray ? %diff : $diff / keys %{ $self->[_DIST] };
 }
 
 *z = \&signif;
@@ -200,7 +206,7 @@ negative and positive values separately.
 =head1 REQUESTS AND BUGS
 
 Please report any bugs or feature requests to
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Statistics-Benford>. I will
+L<http://rt.cpan.org/Public/Bug/Report?Queue=Statistics-Benford>. I will
 be notified, and then you'll automatically be notified of progress on your bug
 as I make changes.
 
@@ -214,6 +220,10 @@ You can also look for information at:
 
 =over
 
+=item * GitHub Source Repository
+
+L<http://github.com/gray/statistics-benford>
+
 =item * AnnoCPAN: Annotated CPAN documentation
 
 L<http://annocpan.org/dist/Statistics-Benford>
@@ -224,7 +234,7 @@ L<http://cpanratings.perl.org/d/Statistics-Benford>
 
 =item * RT: CPAN's request tracker
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Statistics-Benford>
+L<http://rt.cpan.org/Public/Dist/Display.html?Name=Statistics-Benford>
 
 =item * Search CPAN
 
@@ -234,7 +244,7 @@ L<http://search.cpan.org/dist/Statistics-Benford>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2007 gray <gray at cpan.org>, all rights reserved.
+Copyright (C) 2007-2009 gray <gray at cpan.org>, all rights reserved.
 
 This library is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
